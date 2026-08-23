@@ -1,0 +1,94 @@
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { ShoppingCart, User, LogOut, Wallet, ArrowLeft } from 'lucide-react';
+import { useState } from 'react';
+import { useAuth } from '@/context/AuthContext';
+import { useCart } from '@/context/CartContext';
+import { formatPrice } from '@/lib/utils';
+import { Logo } from '@/components/ui/Logo';
+
+export function Header() {
+  const { user, signOut } = useAuth();
+  const { count } = useCart();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [accountOpen, setAccountOpen] = useState(false);
+
+  const isHome = location.pathname === '/dashboard' || location.pathname === '/marketplace';
+
+  return (
+    <header className="elite-topbar sticky top-0 z-50 shadow-lg shadow-black/40">
+      <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4">
+        {!isHome ? (
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="rounded-full p-2 text-muted hover:bg-surface-2 hover:text-text"
+            aria-label="Back"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </button>
+        ) : (
+          <div className="w-9" />
+        )}
+
+        <Link to="/dashboard" className="flex flex-1 items-center justify-center gap-2 min-w-0">
+          <Logo size={28} />
+          <div className="min-w-0 text-center sm:text-left">
+            <p className="text-sm font-bold tracking-[0.2em] text-accent">ELITE</p>
+            <p className="hidden text-[10px] uppercase tracking-widest text-muted sm:block">Marketplace</p>
+          </div>
+        </Link>
+
+        <div className="flex items-center gap-1">
+          {user && (
+            <button
+              type="button"
+              onClick={() => navigate('/deposit')}
+              className="hidden sm:flex items-center gap-1.5 rounded-full border border-border bg-surface-2 px-3 py-1.5"
+            >
+              <Wallet className="h-3.5 w-3.5 text-accent" />
+              <span className="text-xs font-semibold text-accent">{formatPrice(user.balance ?? 0)}</span>
+            </button>
+          )}
+          <Link to="/cart" className="relative rounded-full p-2 text-muted hover:bg-surface-2 hover:text-text">
+            <ShoppingCart className="h-5 w-5" />
+            {count > 0 && (
+              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-bg">
+                {count}
+              </span>
+            )}
+          </Link>
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setAccountOpen((v) => !v)}
+              className="rounded-full p-2 text-muted hover:bg-surface-2 hover:text-text"
+            >
+              <User className="h-5 w-5" />
+            </button>
+            {accountOpen && (
+              <div className="absolute right-0 mt-2 w-48 rounded-xl border border-border bg-surface py-1 shadow-xl">
+                <Link to="/account" onClick={() => setAccountOpen(false)} className="block px-4 py-2.5 text-sm text-muted hover:bg-surface-2 hover:text-text">Account</Link>
+                <Link to="/orders" onClick={() => setAccountOpen(false)} className="block px-4 py-2.5 text-sm text-muted hover:bg-surface-2 hover:text-text">Orders</Link>
+                {user?.role === 'admin' && (
+                  <Link to="/admin" onClick={() => setAccountOpen(false)} className="block px-4 py-2.5 text-sm text-accent hover:bg-surface-2">Admin</Link>
+                )}
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setAccountOpen(false);
+                    await signOut();
+                    navigate('/login');
+                  }}
+                  className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-danger hover:bg-surface-2"
+                >
+                  <LogOut className="h-3.5 w-3.5" /> Sign out
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
