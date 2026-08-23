@@ -2,6 +2,10 @@
   command = "npm run build"
   publish = "dist"
 
+# force rebuild marker 2026-08-23-v12
+[build.environment]
+  NODE_VERSION = "20"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

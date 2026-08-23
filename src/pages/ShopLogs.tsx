@@ -99,6 +99,9 @@ export default function ShopLogs() {
           <h1 className="mt-0.5 text-xl font-bold tracking-tight md:text-2xl uppercase">
             COINBASE LOGS
           </h1>
+          <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-sky-400">
+            Updated build · 15 per page · price filter on
+          </p>
 
           <div className="relative mt-3">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
