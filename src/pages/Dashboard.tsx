@@ -31,9 +31,9 @@ export default function Dashboard() {
   const [view, setView] = useState<'list' | 'grid'>(() => {
     try {
       const v = localStorage.getItem(VIEW_KEY);
-      return v === 'grid' || v === 'list' ? v : 'grid';
+      return v === 'grid' || v === 'list' ? v : 'list';
     } catch {
-      return 'grid';
+      return 'list';
     }
   });
 
@@ -114,7 +114,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        <div className={view === 'grid' ? 'elite-product-grid' : 'space-y-2'}>
+        <div className={view === 'grid' ? 'elite-product-grid' : 'space-y-3'}>
           {slice.map((p) => (
             <ProductCard key={p.id} product={p} view={view} />
           ))}

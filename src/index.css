@@ -81,7 +81,6 @@ body {
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-thumb { background: #2a3548; border-radius: 6px; }
 
-/* 2 columns — one card per column, large cards */
 .elite-product-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -93,6 +92,36 @@ body {
     gap: 1.25rem;
   }
 }
-.elite-grid-card {
-  min-height: 240px;
+
+/* Full-width stacked listing cards with country flag blur bg */
+.elite-listing {
+  position: relative;
+  background: var(--color-surface);
+}
+.elite-listing-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(10px) saturate(0.85);
+  transform: scale(1.12);
+  opacity: 0.28;
+  pointer-events: none;
+}
+.elite-listing-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    rgba(7, 9, 13, 0.92) 0%,
+    rgba(14, 18, 25, 0.82) 45%,
+    rgba(14, 18, 25, 0.75) 100%
+  );
+  pointer-events: none;
+}
+.elite-listing:hover {
+  border-color: rgba(240, 193, 75, 0.45);
+}
+.elite-listing:hover .elite-listing-bg {
+  opacity: 0.35;
 }
