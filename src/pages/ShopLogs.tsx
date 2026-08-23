@@ -14,20 +14,20 @@ function toProduct(a: ShopLogAccount): Product {
   const now = new Date().toISOString();
   return {
     id: a.id,
-    bin: a.id.replace(/\D/g, '').padStart(6, '0').slice(0, 6),
+    bin: String(a.amount).slice(0, 6).padStart(6, '0'),
     country: a.country,
-    brand: a.service,
-    card_type: a.plan,
-    card_level: a.status === 'available' ? 'STANDARD' : 'LIMITED',
-    issuer: 'ELITE DIGITAL',
+    brand: 'Coinbase Log',
+    card_type: `Balance ${formatPrice(a.amount)}`,
+    card_level: 'LOG',
+    issuer: 'Coinbase Log',
     price: a.price,
     zip_code: '00000',
-    stock: a.stock,
-    name: `${a.service} — ${a.plan}`,
-    category: 'accounts',
-    description: `${a.service} ${a.plan} (${a.country})`,
+    stock: 1,
+    name: 'Coinbase Log',
+    category: 'coinbase-logs',
+    description: `Coinbase Log · ${a.country} · ${formatPrice(a.amount)}`,
     image: '',
-    status: a.status === 'available' ? 'active' : 'inactive',
+    status: 'active',
     created_at: now,
     updated_at: now,
   };
@@ -42,9 +42,10 @@ export default function ShopLogs() {
     const s = q.trim().toLowerCase();
     if (!s) return true;
     return (
-      a.service.toLowerCase().includes(s) ||
-      a.plan.toLowerCase().includes(s) ||
-      a.country.toLowerCase().includes(s)
+      a.country.toLowerCase().includes(s) ||
+      String(a.amount).includes(s) ||
+      String(a.price).includes(s) ||
+      'coinbase log'.includes(s)
     );
   });
 
@@ -58,14 +59,13 @@ export default function ShopLogs() {
       <Header />
       <main className="mx-auto max-w-6xl px-4 pt-5">
         <div className="mb-4 rounded-2xl border border-border bg-surface px-4 py-4 md:px-6">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-accent">SHOP LOGS</p>
-          <h1 className="mt-0.5 text-xl font-bold tracking-tight md:text-2xl">Accounts for sale</h1>
-          <p className="mt-1 text-sm text-muted">Digital accounts listed by admin · simulated demo catalog</p>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-accent">LOGS</p>
+          <h1 className="mt-0.5 text-xl font-bold tracking-tight md:text-2xl">Coinbase Logs</h1>
           <div className="relative mt-3">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
             <input
               type="search"
-              placeholder="Search service, plan, country…"
+              placeholder="Search country or amount…"
               value={q}
               onChange={(e) => setQ(e.target.value)}
               className="w-full rounded-xl border border-border bg-surface-2 py-2 pl-10 pr-3 text-sm focus:border-accent focus:outline-none"
@@ -77,21 +77,13 @@ export default function ShopLogs() {
           {filtered.map((a) => (
             <div key={a.id} className="elite-list-row">
               <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-base leading-none">{countryFlag(a.country)}</span>
-                  <span className="text-sm font-semibold">{a.service}</span>
-                  <span
-                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                      a.status === 'available'
-                        ? 'bg-success/15 text-success'
-                        : 'bg-warning/15 text-warning'
-                    }`}
-                  >
-                    {a.status}
-                  </span>
-                </div>
+                <p className="text-sm font-semibold">Coinbase Log</p>
+                <p className="mt-0.5 text-xs text-muted flex items-center gap-1.5">
+                  <span className="text-sm leading-none">{countryFlag(a.country)}</span>
+                  {a.country}
+                </p>
                 <p className="mt-0.5 text-xs text-muted">
-                  {a.plan} · {a.country} · Stock {a.stock}
+                  Amount {formatPrice(a.amount)}
                 </p>
               </div>
               <p className="text-sm font-bold text-accent shrink-0">{formatPrice(a.price)}</p>
@@ -114,7 +106,7 @@ export default function ShopLogs() {
         </div>
 
         {filtered.length === 0 && (
-          <p className="py-14 text-center text-sm text-muted">No accounts match your search.</p>
+          <p className="py-14 text-center text-sm text-muted">No logs match your search.</p>
         )}
       </main>
       <BottomNav />
