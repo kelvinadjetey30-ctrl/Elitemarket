@@ -8,7 +8,6 @@ export type ShopLogAccount = {
 
 const COUNTRIES = ['USA', 'UK', 'GERMANY', 'CANADA', 'FRANCE', 'AUSTRALIA'] as const;
 
-/** Sale price $8–$500 scales with balance amount ($30–$18,000) */
 function priceFromAmount(amount: number, salt: number): number {
   const t = (amount - 30) / (18000 - 30);
   const curved = Math.pow(Math.min(1, Math.max(0, t)), 0.85);
@@ -26,40 +25,85 @@ function mulberry32(a: number) {
   };
 }
 
+function shuffle<T>(arr: T[], rng: () => number): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 function buildLogs(): ShopLogAccount[] {
   const TOTAL = 1600;
+  const PAGE = 15;
+  const FIRST_PAGES = 2;
+  const SMALL_PER_PAGE = 8;
+
   const rng = mulberry32(42);
-  const amounts: number[] = [];
+  const smallPool: number[] = [];
+  const bigPool: number[] = [];
 
   for (let i = 0; i < TOTAL; i++) {
     const r = rng();
     let amount: number;
-    if (r < 0.25) {
-      amount = 30 + rng() * 400;
-    } else if (r < 0.5) {
-      amount = 400 + rng() * 1600;
-    } else if (r < 0.75) {
-      amount = 2000 + rng() * 6000;
+    if (r < 0.35) {
+      amount = 30 + rng() * 770;
+      smallPool.push(Math.round(Math.min(800, Math.max(30, amount))));
+    } else if (r < 0.6) {
+      amount = 801 + rng() * 3200;
+      bigPool.push(Math.round(amount));
+    } else if (r < 0.8) {
+      amount = 4000 + rng() * 6000;
+      bigPool.push(Math.round(amount));
     } else {
-      amount = 8000 + rng() * 10000;
+      amount = 10000 + rng() * 8000;
+      bigPool.push(Math.round(Math.min(18000, amount)));
     }
-    amounts.push(Math.round(Math.min(18000, Math.max(30, amount))));
   }
 
-  for (let i = amounts.length - 1; i > 0; i--) {
-    const j = Math.floor(rng() * (i + 1));
-    [amounts[i], amounts[j]] = [amounts[j], amounts[i]];
+  while (smallPool.length < SMALL_PER_PAGE * FIRST_PAGES + 20) {
+    smallPool.push(Math.round(30 + rng() * 770));
+  }
+  while (smallPool.length + bigPool.length < TOTAL) {
+    bigPool.push(Math.round(801 + rng() * 17199));
   }
 
-  const countries = amounts.map((_, i) => COUNTRIES[i % COUNTRIES.length]);
-  for (let i = countries.length - 1; i > 0; i--) {
-    const j = Math.floor(rng() * (i + 1));
-    [countries[i], countries[j]] = [countries[j], countries[i]];
+  const smalls = shuffle(smallPool, rng);
+  const bigs = shuffle(bigPool, rng);
+
+  const ordered: number[] = [];
+  let sIdx = 0;
+  let bIdx = 0;
+
+  for (let page = 0; page < FIRST_PAGES; page++) {
+    const pageItems: number[] = [];
+    for (let k = 0; k < SMALL_PER_PAGE; k++) {
+      pageItems.push(smalls[sIdx++] ?? Math.round(30 + rng() * 770));
+    }
+    while (pageItems.length < PAGE) {
+      pageItems.push(bigs[bIdx++] ?? Math.round(900 + rng() * 8000));
+    }
+    ordered.push(...shuffle(pageItems, rng));
   }
+
+  const rest: number[] = [];
+  while (sIdx < smalls.length) rest.push(smalls[sIdx++]);
+  while (bIdx < bigs.length) rest.push(bigs[bIdx++]);
+  ordered.push(...shuffle(rest, rng));
+
+  const amounts = ordered.slice(0, TOTAL);
+  while (amounts.length < TOTAL) {
+    amounts.push(Math.round(30 + rng() * 17970));
+  }
+
+  const countries = shuffle(
+    amounts.map((_, i) => COUNTRIES[i % COUNTRIES.length]),
+    rng
+  );
 
   return amounts.map((amount, i) => {
     let price = priceFromAmount(amount, i + 1);
-    // First three listings: cheaper intro prices
     if (i === 0) price = 8;
     else if (i === 1) price = 9.5;
     else if (i === 2) price = 11;

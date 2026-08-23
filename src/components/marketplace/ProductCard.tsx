@@ -60,8 +60,8 @@ function ProductCardInner({
       <div className="relative z-10 flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:gap-5 sm:p-6">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-lg leading-none">{countryFlag(product.country)}</span>
-            <p className="font-mono text-sm font-bold tracking-wide text-accent drop-shadow-sm sm:text-base">
+            <span className="text-base leading-none">{countryFlag(product.country)}</span>
+            <p className="font-mono text-xs font-bold tracking-wide text-accent drop-shadow-sm sm:text-sm">
               {product.bin}
             </p>
           </div>
@@ -75,7 +75,7 @@ function ProductCardInner({
           <p className="mt-1 font-mono text-xs text-muted">ZIP {product.zip_code}</p>
         </div>
         <div className="flex items-center gap-3 sm:flex-col sm:items-end shrink-0">
-          <p className="text-base font-bold text-accent sm:text-lg">{formatPrice(product.price)}</p>
+          <p className="text-sm font-bold text-accent sm:text-base">{formatPrice(product.price)}</p>
           <div className="flex gap-2">
             <Button variant="secondary" size="sm" onClick={() => addItem(product)}>
               <ShoppingCart className="h-4 w-4" />

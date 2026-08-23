@@ -10,7 +10,9 @@ import { ShoppingCart, Zap, Search } from 'lucide-react';
 import { countryFlag } from '@/lib/flags';
 import type { Product } from '@/types';
 
-const PAGE = 40;
+const PAGE = 15;
+const PRICE_MIN = 8;
+const PRICE_MAX = 500;
 
 function CoinbaseLogo({ size = 28 }: { size?: number }) {
   return (
@@ -61,22 +63,27 @@ function toProduct(a: ShopLogAccount): Product {
 export default function ShopLogs() {
   const [q, setQ] = useState('');
   const [page, setPage] = useState(1);
+  const [priceMin, setPriceMin] = useState(PRICE_MIN);
+  const [priceMax, setPriceMax] = useState(PRICE_MAX);
   const { addItem } = useCart();
   const navigate = useNavigate();
 
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
-    if (!s) return SHOP_LOG_ACCOUNTS;
-    return SHOP_LOG_ACCOUNTS.filter(
-      (a) =>
+    return SHOP_LOG_ACCOUNTS.filter((a) => {
+      if (a.price < priceMin || a.price > priceMax) return false;
+      if (!s) return true;
+      return (
         a.country.toLowerCase().includes(s) ||
         String(a.amount).includes(s) ||
         String(a.price).includes(s)
-    );
-  }, [q]);
+      );
+    });
+  }, [q, priceMin, priceMax]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE));
-  const slice = filtered.slice((page - 1) * PAGE, page * PAGE);
+  const safePage = Math.min(page, totalPages);
+  const slice = filtered.slice((safePage - 1) * PAGE, safePage * PAGE);
 
   const buy = (a: ShopLogAccount) => {
     addItem(toProduct(a));
@@ -92,6 +99,7 @@ export default function ShopLogs() {
           <h1 className="mt-0.5 text-xl font-bold tracking-tight md:text-2xl uppercase">
             COINBASE LOGS
           </h1>
+
           <div className="relative mt-3">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
             <input
@@ -104,6 +112,49 @@ export default function ShopLogs() {
               }}
               className="w-full rounded-xl border border-border bg-surface-2 py-2 pl-10 pr-3 text-sm focus:border-accent focus:outline-none"
             />
+          </div>
+
+          <div className="mt-4 space-y-2">
+            <div className="flex items-center justify-between text-xs text-muted">
+              <span className="font-semibold uppercase tracking-wide text-text">Price</span>
+              <span className="text-accent font-semibold">
+                {formatPrice(priceMin)} – {formatPrice(priceMax)}
+              </span>
+            </div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <label className="block text-[11px] text-muted">
+                Min
+                <input
+                  type="range"
+                  min={PRICE_MIN}
+                  max={PRICE_MAX}
+                  step={1}
+                  value={priceMin}
+                  onChange={(e) => {
+                    const v = Number(e.target.value);
+                    setPage(1);
+                    setPriceMin(Math.min(v, priceMax));
+                  }}
+                  className="mt-1 w-full accent-accent"
+                />
+              </label>
+              <label className="block text-[11px] text-muted">
+                Max
+                <input
+                  type="range"
+                  min={PRICE_MIN}
+                  max={PRICE_MAX}
+                  step={1}
+                  value={priceMax}
+                  onChange={(e) => {
+                    const v = Number(e.target.value);
+                    setPage(1);
+                    setPriceMax(Math.max(v, priceMin));
+                  }}
+                  className="mt-1 w-full accent-accent"
+                />
+              </label>
+            </div>
           </div>
         </div>
 
@@ -141,22 +192,27 @@ export default function ShopLogs() {
         </div>
 
         {slice.length === 0 && (
-          <p className="py-14 text-center text-sm text-muted">No logs match your search.</p>
+          <p className="py-14 text-center text-sm text-muted">No logs match your filters.</p>
         )}
 
         {totalPages > 1 && (
           <div className="mt-6 flex items-center justify-center gap-3">
-            <Button variant="secondary" size="sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
+            <Button
+              variant="secondary"
+              size="sm"
+              disabled={safePage <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+            >
               PREV
             </Button>
             <span className="text-sm text-muted">
-              {page} / {totalPages}
+              {safePage} / {totalPages}
             </span>
             <Button
               variant="secondary"
               size="sm"
-              disabled={page >= totalPages}
-              onClick={() => setPage((p) => p + 1)}
+              disabled={safePage >= totalPages}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             >
               NEXT
             </Button>
