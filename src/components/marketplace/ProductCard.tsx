@@ -23,82 +23,65 @@ function ProductCardInner({
     navigate('/checkout');
   };
 
-  const isList = view === 'list';
+  if (view === 'list') {
+    return (
+      <div className="elite-list-row">
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <span className="text-base leading-none">{countryFlag(product.country)}</span>
+            <span className="font-mono text-sm font-semibold text-accent">{product.bin}</span>
+          </div>
+          <p className="mt-0.5 text-xs text-muted truncate">
+            {product.country} · {product.brand} · {product.card_level}
+          </p>
+          <p className="text-[11px] text-muted truncate">
+            {product.issuer} · ZIP {product.zip_code}
+          </p>
+        </div>
+        <p className="text-sm font-bold text-accent shrink-0">{formatPrice(product.price)}</p>
+        <div className="flex gap-1.5 shrink-0">
+          <Button variant="secondary" size="sm" className="!px-2 !py-1" onClick={() => addItem(product)}>
+            <ShoppingCart className="h-3.5 w-3.5" />
+          </Button>
+          <Button size="sm" className="!px-2 !py-1" onClick={buy}>
+            Buy
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <article
-      className={
-        isList
-          ? 'elite-listing elite-listing--list relative overflow-hidden rounded-2xl border border-border'
-          : 'elite-listing elite-listing--grid relative overflow-hidden rounded-2xl border border-border flex flex-col h-full min-h-[210px]'
-      }
-    >
+    <article className="elite-listing elite-listing--grid relative overflow-hidden rounded-2xl border border-border w-full">
       <div className="elite-listing-bg-wrap" aria-hidden>
-        <div
-          className="elite-listing-bg"
-          style={{ backgroundImage: `url(${bg})` }}
-        />
+        <div className="elite-listing-bg" style={{ backgroundImage: `url(${bg})` }} />
       </div>
       <div className="elite-listing-overlay" aria-hidden />
-
-      <div
-        className={
-          isList
-            ? 'relative z-10 flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:gap-4 sm:p-5'
-            : 'relative z-10 flex h-full flex-col gap-2 p-4'
-        }
-      >
-        <div className={isList ? 'min-w-0 flex-1' : 'min-w-0'}>
-          <div className="flex items-center justify-between gap-2 flex-wrap">
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="text-xl leading-none shrink-0" title={product.country}>
-                {countryFlag(product.country)}
-              </span>
-              <p
-                className={`font-mono font-bold tracking-wide text-accent drop-shadow-sm ${
-                  isList ? 'text-xl' : 'text-base'
-                }`}
-              >
-                {product.bin}
-              </p>
-            </div>
-            {!isList && (
-              <span className="text-base font-bold text-accent shrink-0">
-                {formatPrice(product.price)}
-              </span>
-            )}
+      <div className="relative z-10 flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:gap-5 sm:p-6">
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-2xl leading-none">{countryFlag(product.country)}</span>
+            <p className="font-mono text-2xl font-bold tracking-wide text-accent drop-shadow-sm">
+              {product.bin}
+            </p>
           </div>
-          <p className={`mt-1 text-text/95 ${isList ? 'text-sm' : 'text-xs'}`}>
+          <p className="mt-2 text-sm text-text/95">
             {product.country} · {product.brand}
           </p>
-          <p className="mt-0.5 text-xs text-muted line-clamp-1">
+          <p className="mt-1 text-xs text-muted">
             {product.card_level} · {product.card_type}
           </p>
-          <p className="mt-0.5 text-xs text-muted line-clamp-1">{product.issuer}</p>
+          <p className="mt-0.5 text-xs text-muted truncate">{product.issuer}</p>
           <p className="mt-1 font-mono text-xs text-muted">ZIP {product.zip_code}</p>
         </div>
-
-        <div
-          className={
-            isList
-              ? 'flex items-center gap-3 sm:flex-col sm:items-end shrink-0'
-              : 'mt-auto flex flex-col gap-2 pt-2'
-          }
-        >
-          {isList && (
-            <p className="text-xl font-bold text-accent">{formatPrice(product.price)}</p>
-          )}
+        <div className="flex items-center gap-3 sm:flex-col sm:items-end shrink-0">
+          <p className="text-2xl font-bold text-accent">{formatPrice(product.price)}</p>
           <div className="flex gap-2">
-            <Button
-              variant="secondary"
-              size="sm"
-              className={isList ? '' : 'flex-1'}
-              onClick={() => addItem(product)}
-            >
+            <Button variant="secondary" size="sm" onClick={() => addItem(product)}>
               <ShoppingCart className="h-4 w-4" />
-              {isList ? 'Cart' : ''}
+              Cart
             </Button>
-            <Button size="sm" className={isList ? '' : 'flex-1'} onClick={buy}>
+            <Button size="sm" onClick={buy}>
               <Zap className="h-4 w-4" />
               Buy
             </Button>

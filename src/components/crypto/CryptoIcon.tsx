@@ -1,11 +1,11 @@
-/** Real crypto logos via public CDN */
+/** Official-style crypto logos (SVG color icons) */
 const ICON_URLS: Record<string, string> = {
-  BTC: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e7485cc4c9bd3ee95a0ff6f07d69e9/svg/color/btc.svg',
-  ETH: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e7485cc4c9bd3ee95a0ff6f07d69e9/svg/color/eth.svg',
-  SOL: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e7485cc4c9bd3ee95a0ff6f07d69e9/svg/color/sol.svg',
-  LTC: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e7485cc4c9bd3ee95a0ff6f07d69e9/svg/color/ltc.svg',
-  TRX: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e7485cc4c9bd3ee95a0ff6f07d69e9/svg/color/trx.svg',
-  USDT: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e7485cc4c9bd3ee95a0ff6f07d69e9/svg/color/usdt.svg',
+  BTC: 'https://cdn.jsdelivr.net/npm/cryptocurrency-icons@0.18.1/svg/color/btc.svg',
+  ETH: 'https://cdn.jsdelivr.net/npm/cryptocurrency-icons@0.18.1/svg/color/eth.svg',
+  SOL: 'https://cdn.jsdelivr.net/npm/cryptocurrency-icons@0.18.1/svg/color/sol.svg',
+  LTC: 'https://cdn.jsdelivr.net/npm/cryptocurrency-icons@0.18.1/svg/color/ltc.svg',
+  TRX: 'https://cdn.jsdelivr.net/npm/cryptocurrency-icons@0.18.1/svg/color/trx.svg',
+  USDT: 'https://cdn.jsdelivr.net/npm/cryptocurrency-icons@0.18.1/svg/color/usdt.svg',
 };
 
 type Props = {
@@ -16,7 +16,7 @@ type Props = {
   title?: string;
 };
 
-export function CryptoIcon({ option, symbol: sym, size = 32, title }: Props) {
+export function CryptoIcon({ option, symbol: sym, size = 36, title }: Props) {
   const symbol = (option?.symbol || sym || '?').toUpperCase();
   const src = ICON_URLS[symbol];
   const label = title || option?.name || symbol;
@@ -28,7 +28,7 @@ export function CryptoIcon({ option, symbol: sym, size = 32, title }: Props) {
         alt={label}
         width={size}
         height={size}
-        className="shrink-0 rounded-full bg-white/5 object-contain"
+        className="shrink-0 rounded-full bg-white object-contain p-0.5 shadow-sm"
         style={{ width: size, height: size }}
         loading="lazy"
       />
