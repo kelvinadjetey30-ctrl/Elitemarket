@@ -92,7 +92,6 @@ export default function ShopLogs() {
           <h1 className="mt-0.5 text-xl font-bold tracking-tight md:text-2xl uppercase">
             COINBASE LOGS
           </h1>
-          <p className="mt-1 text-xs text-muted">{filtered.length} listings</p>
           <div className="relative mt-3">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
             <input
@@ -118,7 +117,7 @@ export default function ShopLogs() {
                   <span className="text-sm leading-none">{countryFlag(a.country)}</span>
                   <span className="uppercase">{a.country}</span>
                 </p>
-                <p className="mt-0.5 text-xs text-muted uppercase">
+                <p className="mt-0.5 text-xs font-semibold uppercase text-sky-400">
                   Amount {formatPrice(a.amount)}
                 </p>
               </div>
