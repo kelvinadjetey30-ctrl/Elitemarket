@@ -15,7 +15,6 @@ export const CRYPTO_OPTIONS: CryptoOption[] = [
   { id: 'SOL', name: 'Solana', symbol: 'SOL', network: 'Solana', envKey: 'VITE_WALLET_SOL', rateUsd: 150, color: '#14F195' },
   { id: 'LTC', name: 'Litecoin', symbol: 'LTC', network: 'Litecoin', envKey: 'VITE_WALLET_LTC', rateUsd: 85, color: '#345D9D' },
   { id: 'TRX', name: 'Tron', symbol: 'TRX', network: 'TRON', envKey: 'VITE_WALLET_TRX', rateUsd: 0.12, color: '#FF0013' },
-  { id: 'USDT', name: 'Tether', symbol: 'USDT', network: 'TRC20 (Tron)', envKey: 'VITE_WALLET_USDT_TRC20', rateUsd: 1, color: '#26A17B' },
 ];
 
 const DEFAULT_WALLETS: Record<string, string> = {
@@ -24,7 +23,6 @@ const DEFAULT_WALLETS: Record<string, string> = {
   VITE_WALLET_SOL: '9buLs73w2UqCWCwUPcqn2QitkZ2gJU5sUTzmkkNPcCyr',
   VITE_WALLET_LTC: 'ltc1qusj23jzqda7tq0lk578hl9xhz4hktrgq7pnyvq',
   VITE_WALLET_TRX: 'TRdhtFumJDc68QipY5YdWVXrPngjzEFN9V',
-  VITE_WALLET_USDT_TRC20: 'TRdhtFumJDc68QipY5YdWVXrPngjzEFN9V',
 };
 
 const WALLETS_KEY = 'elite_admin_wallets';

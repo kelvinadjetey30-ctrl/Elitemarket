@@ -17,7 +17,7 @@ export function Header() {
 
   return (
     <header className="elite-topbar sticky top-0 z-50 shadow-lg shadow-black/40">
-      <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4">
+      <div className="mx-auto flex h-14 max-w-6xl items-center gap-2 px-3 sm:h-16 sm:gap-3 sm:px-4">
         {!isHome ? (
           <button
             type="button"
@@ -28,26 +28,29 @@ export function Header() {
             <ArrowLeft className="h-5 w-5" />
           </button>
         ) : (
-          <div className="w-9" />
+          <div className="w-2 sm:w-9" />
         )}
 
-        <Link to="/dashboard" className="flex flex-1 items-center justify-center gap-2 min-w-0">
-          <Logo size={28} />
+        <Link to="/dashboard" className="flex min-w-0 flex-1 items-center justify-center gap-2">
+          <Logo size={26} />
           <div className="min-w-0 text-center sm:text-left">
             <p className="text-sm font-bold tracking-[0.2em] text-accent">ELITE</p>
             <p className="hidden text-[10px] uppercase tracking-widest text-muted sm:block">Marketplace</p>
           </div>
         </Link>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5 sm:gap-1">
           {user && (
             <button
               type="button"
               onClick={() => navigate('/deposit')}
-              className="hidden sm:flex items-center gap-1.5 rounded-full border border-border bg-surface-2 px-3 py-1.5"
+              className="flex items-center gap-1 rounded-full border border-border bg-surface-2 px-2 py-1 sm:gap-1.5 sm:px-3 sm:py-1.5"
+              title="Wallet balance"
             >
-              <Wallet className="h-3.5 w-3.5 text-accent" />
-              <span className="text-xs font-semibold text-accent">{formatPrice(user.balance ?? 0)}</span>
+              <Wallet className="h-3.5 w-3.5 text-accent shrink-0" />
+              <span className="text-[11px] font-semibold text-accent sm:text-xs">
+                {formatPrice(user.balance ?? 0)}
+              </span>
             </button>
           )}
           <Link to="/cart" className="relative rounded-full p-2 text-muted hover:bg-surface-2 hover:text-text">
@@ -67,9 +70,10 @@ export function Header() {
               <User className="h-5 w-5" />
             </button>
             {accountOpen && (
-              <div className="absolute right-0 mt-2 w-48 rounded-xl border border-border bg-surface py-1 shadow-xl">
+              <div className="absolute right-0 mt-2 w-48 rounded-xl border border-border bg-surface py-1 shadow-xl z-50">
                 <Link to="/account" onClick={() => setAccountOpen(false)} className="block px-4 py-2.5 text-sm text-muted hover:bg-surface-2 hover:text-text">Account</Link>
                 <Link to="/orders" onClick={() => setAccountOpen(false)} className="block px-4 py-2.5 text-sm text-muted hover:bg-surface-2 hover:text-text">Orders</Link>
+                <Link to="/shop-logs" onClick={() => setAccountOpen(false)} className="block px-4 py-2.5 text-sm text-muted hover:bg-surface-2 hover:text-text">Shop Logs</Link>
                 {user?.role === 'admin' && (
                   <Link to="/admin" onClick={() => setAccountOpen(false)} className="block px-4 py-2.5 text-sm text-accent hover:bg-surface-2">Admin</Link>
                 )}
