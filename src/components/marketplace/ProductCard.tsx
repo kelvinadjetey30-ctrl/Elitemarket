@@ -7,46 +7,72 @@ import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, Zap } from 'lucide-react';
 import { countryFlag } from '@/lib/flags';
 
-function ProductCardInner({ product }: { product: Product }) {
+function ProductCardInner({
+  product,
+  view = 'list',
+}: {
+  product: Product;
+  view?: 'list' | 'grid';
+}) {
   const { addItem } = useCart();
   const navigate = useNavigate();
 
+  const buy = () => {
+    addItem(product);
+    navigate('/checkout');
+  };
+
+  if (view === 'grid') {
+    return (
+      <article className="elite-grid-card flex flex-col gap-2 rounded-xl border border-border bg-surface p-3 hover:border-accent/40 transition-colors">
+        <div className="flex items-start justify-between gap-1">
+          <p className="font-mono text-sm font-bold tracking-wide text-accent">{product.bin}</p>
+          <span className="text-sm font-bold text-accent shrink-0">{formatPrice(product.price)}</span>
+        </div>
+        <p className="text-[11px] text-muted flex items-center gap-1 truncate">
+          <span>{countryFlag(product.country)}</span>
+          {product.country}
+        </p>
+        <p className="text-xs font-medium truncate">{product.brand}</p>
+        <p className="text-[11px] text-muted truncate">{product.card_level} · {product.card_type}</p>
+        <p className="text-[11px] text-muted truncate">{product.issuer}</p>
+        <p className="text-[11px] font-mono text-muted">ZIP {product.zip_code}</p>
+        <div className="mt-auto flex gap-1.5 pt-1">
+          <Button variant="secondary" size="sm" className="flex-1 !px-2 !py-1.5 text-xs" onClick={() => addItem(product)}>
+            <ShoppingCart className="h-3 w-3" />
+          </Button>
+          <Button size="sm" className="flex-1 !px-2 !py-1.5 text-xs" onClick={buy}>
+            <Zap className="h-3 w-3" />
+            Buy
+          </Button>
+        </div>
+      </article>
+    );
+  }
+
   return (
-    <article className="elite-row">
-      <div>
-        <p className="elite-bin">{product.bin}</p>
-        <p className="mt-1 text-xs text-muted flex items-center gap-1">
+    <article className="elite-row-compact">
+      <div className="min-w-0">
+        <p className="font-mono text-sm font-bold text-accent">{product.bin}</p>
+        <p className="text-[11px] text-muted flex items-center gap-1">
           <span>{countryFlag(product.country)}</span>
           {product.country}
         </p>
       </div>
-      <div className="min-w-0">
-        <p className="text-sm font-semibold truncate">{product.brand}</p>
-        <p className="text-xs text-muted truncate">{product.card_type}</p>
-        <span className="elite-pill mt-1">{product.card_level}</span>
+      <div className="min-w-0 hidden sm:block">
+        <p className="text-xs font-medium truncate">{product.brand}</p>
+        <p className="text-[11px] text-muted truncate">{product.card_type}</p>
       </div>
-      <div className="min-w-0 text-xs">
-        <p className="text-muted">Issuer</p>
-        <p className="font-medium truncate">{product.issuer}</p>
-        <p className="text-muted mt-1">ZIP</p>
-        <p className="font-mono">{product.zip_code}</p>
+      <div className="min-w-0 hidden md:block">
+        <p className="text-[11px] text-muted truncate">{product.issuer}</p>
+        <p className="text-[11px] font-mono">{product.zip_code}</p>
       </div>
-      <div className="text-right md:text-center">
-        <p className="text-lg font-bold text-accent">{formatPrice(product.price)}</p>
-      </div>
-      <div className="flex gap-2 md:justify-end">
-        <Button variant="secondary" size="sm" onClick={() => addItem(product)}>
-          <ShoppingCart className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">Cart</span>
+      <p className="text-sm font-bold text-accent text-right">{formatPrice(product.price)}</p>
+      <div className="flex gap-1.5 justify-end">
+        <Button variant="secondary" size="sm" className="!px-2 !py-1 text-xs" onClick={() => addItem(product)}>
+          <ShoppingCart className="h-3 w-3" />
         </Button>
-        <Button
-          size="sm"
-          onClick={() => {
-            addItem(product);
-            navigate('/checkout');
-          }}
-        >
-          <Zap className="h-3.5 w-3.5" />
+        <Button size="sm" className="!px-2 !py-1 text-xs" onClick={buy}>
           Buy
         </Button>
       </div>
