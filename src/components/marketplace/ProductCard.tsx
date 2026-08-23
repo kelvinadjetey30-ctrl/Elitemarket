@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, Zap } from 'lucide-react';
 import { countryFlag, countryBgUrl } from '@/lib/flags';
 
-/** Same card look for grid + list — country flag background, full details */
 function ProductCardInner({
   product,
   view = 'list',
@@ -30,15 +29,16 @@ function ProductCardInner({
     <article
       className={
         isList
-          ? 'elite-listing relative overflow-hidden rounded-2xl border border-border'
-          : 'elite-listing relative overflow-hidden rounded-2xl border border-border flex flex-col h-full min-h-[200px]'
+          ? 'elite-listing elite-listing--list relative overflow-hidden rounded-2xl border border-border'
+          : 'elite-listing elite-listing--grid relative overflow-hidden rounded-2xl border border-border flex flex-col h-full min-h-[210px]'
       }
     >
-      <div
-        className="elite-listing-bg"
-        style={{ backgroundImage: `url(${bg})` }}
-        aria-hidden
-      />
+      <div className="elite-listing-bg-wrap" aria-hidden>
+        <div
+          className="elite-listing-bg"
+          style={{ backgroundImage: `url(${bg})` }}
+        />
+      </div>
       <div className="elite-listing-overlay" aria-hidden />
 
       <div
@@ -54,12 +54,18 @@ function ProductCardInner({
               <span className="text-xl leading-none shrink-0" title={product.country}>
                 {countryFlag(product.country)}
               </span>
-              <p className={`font-mono font-bold tracking-wide text-accent drop-shadow-sm ${isList ? 'text-xl' : 'text-base'}`}>
+              <p
+                className={`font-mono font-bold tracking-wide text-accent drop-shadow-sm ${
+                  isList ? 'text-xl' : 'text-base'
+                }`}
+              >
                 {product.bin}
               </p>
             </div>
             {!isList && (
-              <span className="text-base font-bold text-accent shrink-0">{formatPrice(product.price)}</span>
+              <span className="text-base font-bold text-accent shrink-0">
+                {formatPrice(product.price)}
+              </span>
             )}
           </div>
           <p className={`mt-1 text-text/95 ${isList ? 'text-sm' : 'text-xs'}`}>
@@ -79,7 +85,9 @@ function ProductCardInner({
               : 'mt-auto flex flex-col gap-2 pt-2'
           }
         >
-          {isList && <p className="text-xl font-bold text-accent">{formatPrice(product.price)}</p>}
+          {isList && (
+            <p className="text-xl font-bold text-accent">{formatPrice(product.price)}</p>
+          )}
           <div className="flex gap-2">
             <Button
               variant="secondary"
