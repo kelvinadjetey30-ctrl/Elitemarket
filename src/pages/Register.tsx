@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
 import { Logo } from '@/components/ui/Logo';
 
 export default function Register() {
@@ -23,7 +22,8 @@ export default function Register() {
       return;
     }
     if (password.length < 6) {
-      setError('Password must be at least 6 characters');\n      return;
+      setError('Password must be at least 6 characters');
+      return;
     }
     setLoading(true);
     const { error: err } = await signUp(email, password);
@@ -39,14 +39,34 @@ export default function Register() {
     <div className="flex min-h-screen items-center justify-center bg-bg px-4">
       <div className="w-full max-w-md rounded-2xl border border-accent/30 bg-surface p-8">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-3 flex justify-center"><Logo size={40} /></div>
+          <div className="mx-auto mb-3 flex justify-center">
+            <Logo size={40} />
+          </div>
           <h1 className="text-2xl font-semibold tracking-tight">Create account</h1>
           <p className="mt-1 text-sm text-muted">Join ELITEMARKET</p>
         </div>
         <form onSubmit={onSubmit} className="space-y-4">
-          <Input label="Email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-          <Input label="Password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
-          <Input label="Confirm password" type="password" required value={confirm} onChange={(e) => setConfirm(e.target.value)} />
+          <Input
+            label="Email"
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Input
+            label="Password"
+            type="password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Input
+            label="Confirm password"
+            type="password"
+            required
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+          />
           {error && <p className="text-sm text-danger">{error}</p>}
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? 'Creating…' : 'Create account'}
@@ -54,7 +74,9 @@ export default function Register() {
         </form>
         <p className="mt-4 text-center text-sm text-muted">
           Already have an account?{' '}
-          <Link to="/login" className="text-accent hover:underline">Sign in</Link>
+          <Link to="/login" className="text-accent hover:underline">
+            Sign in
+          </Link>
         </p>
       </div>
     </div>
