@@ -18,8 +18,9 @@ export default function Login() {
     setError('');
     setLoading(true);
     try {
-      await signIn(email, password);
-      navigate('/dashboard');
+      const { error: err } = await signIn(email, password);
+      if (err) setError(err);
+      else navigate('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
@@ -48,9 +49,7 @@ export default function Login() {
         </form>
         <p className="mt-6 text-center text-sm text-muted">
           No account?{' '}
-          <Link to="/register" className="font-medium text-accent hover:underline">
-            Create one
-          </Link>
+          <Link to="/register" className="font-medium text-accent hover:underline">Create one</Link>
         </p>
       </div>
     </div>
