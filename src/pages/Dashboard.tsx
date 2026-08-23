@@ -114,7 +114,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        <div className={view === 'grid' ? 'elite-product-grid' : 'space-y-3'}>
+        <div className={view === 'grid' ? 'elite-grid-stack' : 'elite-list-stack'}>
           {slice.map((p) => (
             <ProductCard key={p.id} product={p} view={view} />
           ))}
