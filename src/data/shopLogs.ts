@@ -51,19 +51,25 @@ function buildLogs(): ShopLogAccount[] {
     [amounts[i], amounts[j]] = [amounts[j], amounts[i]];
   }
 
-  // Shuffle countries independently so order is mixed
   const countries = amounts.map((_, i) => COUNTRIES[i % COUNTRIES.length]);
   for (let i = countries.length - 1; i > 0; i--) {
     const j = Math.floor(rng() * (i + 1));
     [countries[i], countries[j]] = [countries[j], countries[i]];
   }
 
-  return amounts.map((amount, i) => ({
-    id: `cb-log-${String(i + 1).padStart(4, '0')}`,
-    amount,
-    price: priceFromAmount(amount, i + 1),
-    country: countries[i],
-  }));
+  return amounts.map((amount, i) => {
+    let price = priceFromAmount(amount, i + 1);
+    // First three listings: cheaper intro prices
+    if (i === 0) price = 8;
+    else if (i === 1) price = 9.5;
+    else if (i === 2) price = 11;
+    return {
+      id: `cb-log-${String(i + 1).padStart(4, '0')}`,
+      amount,
+      price,
+      country: countries[i],
+    };
+  });
 }
 
 export const SHOP_LOG_ACCOUNTS: ShopLogAccount[] = buildLogs();
