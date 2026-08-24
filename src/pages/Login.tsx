@@ -1,17 +1,39 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Logo } from '@/components/ui/Logo';
 
+const REMEMBER_EMAIL_KEY = 'elite_remember_email';
+const REMEMBER_PASS_KEY = 'elite_remember_pass';
+const REMEMBER_FLAG_KEY = 'elite_remember_flag';
+
 export default function Login() {
-  const { signIn } = useAuth();
+  const { signIn, user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [remember, setRemember] = useState(true);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    try {
+      const flag = localStorage.getItem(REMEMBER_FLAG_KEY);
+      const savedEmail = localStorage.getItem(REMEMBER_EMAIL_KEY) || '';
+      const savedPass = localStorage.getItem(REMEMBER_PASS_KEY) || '';
+      if (flag === '1') {
+        setRemember(true);
+        if (savedEmail) setEmail(savedEmail);
+        if (savedPass) setPassword(savedPass);
+      }
+    } catch { /* ignore */ }
+  }, []);
+
+  useEffect(() => {
+    if (!authLoading && user) navigate('/dashboard', { replace: true });
+  }, [user, authLoading, navigate]);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -19,8 +41,22 @@ export default function Login() {
     setLoading(true);
     try {
       const { error: err } = await signIn(email, password);
-      if (err) setError(err);
-      else navigate('/dashboard');
+      if (err) {
+        setError(err);
+        return;
+      }
+      try {
+        if (remember) {
+          localStorage.setItem(REMEMBER_FLAG_KEY, '1');
+          localStorage.setItem(REMEMBER_EMAIL_KEY, email);
+          localStorage.setItem(REMEMBER_PASS_KEY, password);
+        } else {
+          localStorage.removeItem(REMEMBER_FLAG_KEY);
+          localStorage.removeItem(REMEMBER_EMAIL_KEY);
+          localStorage.removeItem(REMEMBER_PASS_KEY);
+        }
+      } catch { /* ignore */ }
+      navigate('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
@@ -42,6 +78,15 @@ export default function Login() {
         <form onSubmit={onSubmit} className="space-y-4">
           <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
           <Input label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password" />
+          <label className="flex items-center gap-2 text-sm text-muted cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={remember}
+              onChange={(e) => setRemember(e.target.checked)}
+              className="accent-accent h-4 w-4 rounded"
+            />
+            Remember me (stay signed in)
+          </label>
           {error && <p className="text-sm text-danger">{error}</p>}
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? 'Signing in…' : 'Continue'}
