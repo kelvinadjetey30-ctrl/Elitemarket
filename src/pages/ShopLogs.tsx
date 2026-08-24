@@ -96,9 +96,12 @@ export default function ShopLogs() {
       <main className="mx-auto max-w-6xl px-4 pt-5 pb-8">
         <div className="mb-4 rounded-2xl border border-border bg-surface px-4 py-4 md:px-6">
           <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-accent">LOGS</p>
-          <h1 className="mt-0.5 text-xl font-bold tracking-tight md:text-2xl uppercase">
-            COINBASE LOGS
-          </h1>
+          <div className="mt-1 flex items-center gap-3">
+            <CoinbaseLogo size={40} />
+            <h1 className="text-xl font-bold tracking-tight md:text-2xl uppercase">
+              COINBASE LOGS
+            </h1>
+          </div>
 
           <div className="relative mt-3">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
