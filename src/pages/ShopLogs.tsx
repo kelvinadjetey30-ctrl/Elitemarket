@@ -63,14 +63,15 @@ function toProduct(a: ShopLogAccount): Product {
 export default function ShopLogs() {
   const [q, setQ] = useState('');
   const [page, setPage] = useState(1);
-  const [maxPrice, setMaxPrice] = useState(PRICE_MAX);
+  const [priceMin, setPriceMin] = useState(PRICE_MIN);
+  const [priceMax, setPriceMax] = useState(PRICE_MAX);
   const { addItem } = useCart();
   const navigate = useNavigate();
 
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
     return SHOP_LOG_ACCOUNTS.filter((a) => {
-      if (a.price > maxPrice) return false;
+      if (a.price < priceMin || a.price > priceMax) return false;
       if (!s) return true;
       return (
         a.country.toLowerCase().includes(s) ||
@@ -78,7 +79,7 @@ export default function ShopLogs() {
         String(a.price).includes(s)
       );
     });
-  }, [q, maxPrice]);
+  }, [q, priceMin, priceMax]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE));
   const safePage = Math.min(page, totalPages);
@@ -113,29 +114,43 @@ export default function ShopLogs() {
             />
           </div>
 
-          <div className="mt-4 space-y-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-semibold uppercase tracking-wide text-text">Price</span>
-              <span className="font-semibold text-accent">
-                Up to {formatPrice(maxPrice)}
-              </span>
-            </div>
-            <input
-              type="range"
-              min={PRICE_MIN}
-              max={PRICE_MAX}
-              step={1}
-              value={maxPrice}
-              onChange={(e) => {
-                setPage(1);
-                setMaxPrice(Number(e.target.value));
-              }}
-              className="w-full accent-accent"
-              aria-label="Maximum price"
-            />
-            <div className="flex justify-between text-[10px] text-muted">
-              <span>{formatPrice(PRICE_MIN)}</span>
-              <span>{formatPrice(PRICE_MAX)}</span>
+          <div className="mt-4">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-text">Price (USD)</p>
+            <div className="grid grid-cols-2 gap-3">
+              <label className="block text-[11px] text-muted">
+                Min
+                <input
+                  type="number"
+                  inputMode="decimal"
+                  min={0}
+                  step={1}
+                  value={priceMin}
+                  onChange={(e) => {
+                    setPage(1);
+                    const v = e.target.value === '' ? 0 : Number(e.target.value);
+                    setPriceMin(Number.isFinite(v) ? v : 0);
+                  }}
+                  className="mt-1 w-full rounded-xl border border-border bg-surface-2 px-3 py-2 text-sm text-text focus:border-accent focus:outline-none"
+                  placeholder="8"
+                />
+              </label>
+              <label className="block text-[11px] text-muted">
+                Max
+                <input
+                  type="number"
+                  inputMode="decimal"
+                  min={0}
+                  step={1}
+                  value={priceMax}
+                  onChange={(e) => {
+                    setPage(1);
+                    const v = e.target.value === '' ? 0 : Number(e.target.value);
+                    setPriceMax(Number.isFinite(v) ? v : 0);
+                  }}
+                  className="mt-1 w-full rounded-xl border border-border bg-surface-2 px-3 py-2 text-sm text-text focus:border-accent focus:outline-none"
+                  placeholder="500"
+                />
+              </label>
             </div>
           </div>
         </div>
