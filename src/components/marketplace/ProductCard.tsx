@@ -57,7 +57,7 @@ function ProductCardInner({
         <div className="elite-listing-bg" style={{ backgroundImage: `url(${bg})` }} />
       </div>
       <div className="elite-listing-overlay" aria-hidden />
-      <div className="relative z-10 flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:gap-5 sm:p-6">
+      <div className="relative z-10 flex flex-col gap-2 p-3 sm:flex-row sm:items-center sm:gap-4 sm:p-4">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-base leading-none">{countryFlag(product.country)}</span>
@@ -65,7 +65,7 @@ function ProductCardInner({
               {product.bin}
             </p>
           </div>
-          <p className="mt-2 text-sm text-text/95">
+          <p className="mt-1 text-sm text-text/95">
             {product.country} · {product.brand}
           </p>
           <p className="mt-1 text-xs text-muted">

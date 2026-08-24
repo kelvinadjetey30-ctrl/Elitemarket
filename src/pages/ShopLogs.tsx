@@ -12,7 +12,7 @@ import type { Product } from '@/types';
 
 const PAGE = 15;
 const PRICE_MIN = 12;
-const PRICE_MAX = 150;
+const PRICE_MAX = 110;
 
 function CoinbaseLogo({ size = 28 }: { size?: number }) {
   return (
@@ -151,7 +151,7 @@ export default function ShopLogs() {
                     setPriceMax(Number.isFinite(v) ? v : 0);
                   }}
                   className="mt-1 w-full rounded-xl border border-border bg-surface-2 px-3 py-2 text-sm text-text focus:border-accent focus:outline-none"
-                  placeholder="150"
+                  placeholder="110"
                 />
               </label>
             </div>
@@ -174,12 +174,7 @@ export default function ShopLogs() {
               </div>
               <p className="text-sm font-bold text-accent shrink-0">{formatPrice(a.price)}</p>
               <div className="flex gap-1.5 shrink-0">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="!px-2 !py-1"
-                  onClick={() => addItem(toProduct(a))}
-                >
+                <Button variant="secondary" size="sm" className="!px-2 !py-1" onClick={() => addItem(toProduct(a))}>
                   <ShoppingCart className="h-3.5 w-3.5" />
                 </Button>
                 <Button size="sm" className="!px-2 !py-1" onClick={() => buy(a)}>
@@ -197,13 +192,9 @@ export default function ShopLogs() {
 
         {totalPages > 1 && (
           <div className="mt-6 flex items-center justify-center gap-3">
-            <Button variant="secondary" size="sm" disabled={safePage <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
-              PREV
-            </Button>
+            <Button variant="secondary" size="sm" disabled={safePage <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>PREV</Button>
             <span className="text-sm text-muted">{safePage} / {totalPages}</span>
-            <Button variant="secondary" size="sm" disabled={safePage >= totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>
-              NEXT
-            </Button>
+            <Button variant="secondary" size="sm" disabled={safePage >= totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>NEXT</Button>
           </div>
         )}
       </main>
