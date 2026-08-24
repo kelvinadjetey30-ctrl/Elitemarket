@@ -26,11 +26,13 @@ function shuffle<T>(arr: T[], rng: () => number): T[] {
   return a;
 }
 
-function amountFromPrice(price: number, rng: () => number): number {
-  const t = (price - 12) / (110 - 12);
-  const base = 400 + t * (8000 - 400);
-  const noise = (rng() - 0.5) * 500;
-  return Math.round(Math.min(8000, Math.max(400, base + noise)));
+/** Sale price $12–$110 varies due to account amount $400–$8000 */
+function priceFromAmount(amount: number, rng: () => number): number {
+  const t = (amount - 400) / (8000 - 400);
+  const curved = Math.pow(Math.min(1, Math.max(0, t)), 0.9);
+  let price = 12 + curved * (110 - 12);
+  price += (rng() - 0.5) * 6;
+  return Math.min(110, Math.max(12, Math.round(price * 100) / 100));
 }
 
 function buildLogs(): ShopLogAccount[] {
@@ -39,66 +41,69 @@ function buildLogs(): ShopLogAccount[] {
   const FIRST_PAGES = 2;
   const CHEAP_PER_PAGE = 10;
 
-  const rng = mulberry32(91);
+  const rng = mulberry32(103);
 
-  const nVeryCheap = Math.round(TOTAL * 0.75);
+  const nLow = Math.round(TOTAL * 0.75);
   const nMid = Math.round(TOTAL * 0.15);
-  const nHigh = TOTAL - nVeryCheap - nMid;
+  const nHigh = TOTAL - nLow - nMid;
 
-  const prices: number[] = [];
-  for (let i = 0; i < nVeryCheap; i++) {
-    prices.push(Math.round((12 + rng() * (50 - 12)) * 100) / 100);
+  const amounts: number[] = [];
+  for (let i = 0; i < nLow; i++) {
+    amounts.push(Math.round(400 + rng() * (2500 - 400)));
   }
   for (let i = 0; i < nMid; i++) {
-    prices.push(Math.round((50 + rng() * (80 - 50)) * 100) / 100);
+    amounts.push(Math.round(2500 + rng() * (5000 - 2500)));
   }
   for (let i = 0; i < nHigh; i++) {
-    prices.push(Math.round((80 + rng() * (110 - 80)) * 100) / 100);
+    amounts.push(Math.round(5000 + rng() * (8000 - 5000)));
   }
 
-  const cheap = shuffle(prices.filter((p) => p < 50), rng);
-  const rest = shuffle(prices.filter((p) => p >= 50), rng);
+  const small = shuffle(amounts.filter((a) => a < 2500), rng);
+  const rest = shuffle(amounts.filter((a) => a >= 2500), rng);
 
   const ordered: number[] = [];
-  let cIdx = 0;
+  let sIdx = 0;
   let rIdx = 0;
 
   for (let page = 0; page < FIRST_PAGES; page++) {
     const pageItems: number[] = [];
     for (let k = 0; k < CHEAP_PER_PAGE; k++) {
-      pageItems.push(cheap[cIdx++] ?? 12 + rng() * 30);
+      pageItems.push(small[sIdx++] ?? Math.round(400 + rng() * 1500));
     }
     while (pageItems.length < PAGE) {
-      pageItems.push(rest[rIdx++] ?? 55 + rng() * 40);
+      pageItems.push(rest[rIdx++] ?? Math.round(2500 + rng() * 3000));
     }
     ordered.push(...shuffle(pageItems, rng));
   }
 
   const leftover: number[] = [];
-  while (cIdx < cheap.length) leftover.push(cheap[cIdx++]);
+  while (sIdx < small.length) leftover.push(small[sIdx++]);
   while (rIdx < rest.length) leftover.push(rest[rIdx++]);
   ordered.push(...shuffle(leftover, rng));
 
-  while (ordered.length < TOTAL) ordered.push(12 + rng() * 40);
+  while (ordered.length < TOTAL) {
+    ordered.push(Math.round(400 + rng() * 2000));
+  }
 
-  const finalPrices = ordered.slice(0, TOTAL).map((p) =>
-    Math.min(110, Math.max(12, Math.round(p * 100) / 100))
+  const finalAmounts = ordered.slice(0, TOTAL).map((a) =>
+    Math.min(8000, Math.max(400, a))
   );
 
   const countries = shuffle(
-    finalPrices.map((_, i) => COUNTRIES[i % COUNTRIES.length]),
+    finalAmounts.map((_, i) => COUNTRIES[i % COUNTRIES.length]),
     rng
   );
 
-  return finalPrices.map((price, i) => {
-    let p = price;
-    if (i === 0) p = 12;
-    else if (i === 1) p = 13;
-    else if (i === 2) p = 14;
+  return finalAmounts.map((amount, i) => {
+    let amt = amount;
+    if (i === 0) amt = 420;
+    else if (i === 1) amt = 480;
+    else if (i === 2) amt = 550;
+
     return {
       id: `cb-log-${String(i + 1).padStart(4, '0')}`,
-      amount: amountFromPrice(p, rng),
-      price: p,
+      amount: amt,
+      price: priceFromAmount(amt, rng),
       country: countries[i],
     };
   });
