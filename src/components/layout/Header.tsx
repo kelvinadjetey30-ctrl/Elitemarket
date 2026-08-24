@@ -7,10 +7,10 @@ import { formatPrice } from '@/lib/utils';
 import { Logo } from '@/components/ui/Logo';
 
 const DESKTOP_LINKS = [
-  { to: '/dashboard', label: 'SHOP' },
+  { to: '/dashboard', label: 'CARDS' },
   { to: '/shop-logs', label: 'LOGS' },
   { to: '/deposit', label: 'DEPOSIT' },
-  { to: '/my-cards', label: 'CARDS' },
+  { to: '/my-cards', label: 'MY CARDS' },
   { to: '/orders', label: 'ORDERS' },
   { to: '/support', label: 'SUPPORT' },
 ];

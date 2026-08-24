@@ -2,10 +2,10 @@ import { Link, useLocation } from 'react-router-dom';
 import { LayoutGrid, Wallet, ScrollText, ShoppingBag, CreditCard } from 'lucide-react';
 
 const items = [
-  { to: '/dashboard', label: 'Shop', icon: LayoutGrid },
+  { to: '/dashboard', label: 'Cards', icon: LayoutGrid },
   { to: '/shop-logs', label: 'Logs', icon: ScrollText },
   { to: '/deposit', label: 'Deposit', icon: Wallet },
-  { to: '/my-cards', label: 'Cards', icon: CreditCard },
+  { to: '/my-cards', label: 'My Cards', icon: CreditCard },
   { to: '/cart', label: 'Cart', icon: ShoppingBag },
 ];
 
