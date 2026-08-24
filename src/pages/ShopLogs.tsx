@@ -11,8 +11,8 @@ import { countryFlag } from '@/lib/flags';
 import type { Product } from '@/types';
 
 const PAGE = 15;
-const PRICE_MIN = 8;
-const PRICE_MAX = 500;
+const PRICE_MIN = 12;
+const PRICE_MAX = 150;
 
 function CoinbaseLogo({ size = 28 }: { size?: number }) {
   return (
@@ -134,7 +134,7 @@ export default function ShopLogs() {
                     setPriceMin(Number.isFinite(v) ? v : 0);
                   }}
                   className="mt-1 w-full rounded-xl border border-border bg-surface-2 px-3 py-2 text-sm text-text focus:border-accent focus:outline-none"
-                  placeholder="8"
+                  placeholder="12"
                 />
               </label>
               <label className="block text-[11px] text-muted">
@@ -151,7 +151,7 @@ export default function ShopLogs() {
                     setPriceMax(Number.isFinite(v) ? v : 0);
                   }}
                   className="mt-1 w-full rounded-xl border border-border bg-surface-2 px-3 py-2 text-sm text-text focus:border-accent focus:outline-none"
-                  placeholder="500"
+                  placeholder="150"
                 />
               </label>
             </div>

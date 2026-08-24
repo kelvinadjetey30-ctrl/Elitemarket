@@ -8,14 +8,6 @@ export type ShopLogAccount = {
 
 const COUNTRIES = ['USA', 'UK', 'GERMANY', 'CANADA', 'FRANCE', 'AUSTRALIA'] as const;
 
-function priceFromAmount(amount: number, salt: number): number {
-  const t = (amount - 30) / (18000 - 30);
-  const curved = Math.pow(Math.min(1, Math.max(0, t)), 0.85);
-  let price = 8 + curved * (500 - 8);
-  price += ((salt * 19) % 37) - 18;
-  return Math.min(500, Math.max(8, Math.round(price * 100) / 100));
-}
-
 function mulberry32(a: number) {
   return function () {
     let t = (a += 0x6d2b79f5);
@@ -34,83 +26,90 @@ function shuffle<T>(arr: T[], rng: () => number): T[] {
   return a;
 }
 
+/** Amount $400–$8000 scales with price $12–$150 */
+function amountFromPrice(price: number, rng: () => number): number {
+  const t = (price - 12) / (150 - 12);
+  const base = 400 + t * (8000 - 400);
+  const noise = (rng() - 0.5) * 600;
+  return Math.round(Math.min(8000, Math.max(400, base + noise)));
+}
+
 function buildLogs(): ShopLogAccount[] {
   const TOTAL = 1600;
   const PAGE = 15;
   const FIRST_PAGES = 2;
   const SMALL_PER_PAGE = 8;
 
-  const rng = mulberry32(42);
-  const smallPool: number[] = [];
-  const bigPool: number[] = [];
+  const rng = mulberry32(77);
 
-  for (let i = 0; i < TOTAL; i++) {
-    const r = rng();
-    let amount: number;
-    if (r < 0.35) {
-      amount = 30 + rng() * 770;
-      smallPool.push(Math.round(Math.min(800, Math.max(30, amount))));
-    } else if (r < 0.6) {
-      amount = 801 + rng() * 3200;
-      bigPool.push(Math.round(amount));
-    } else if (r < 0.8) {
-      amount = 4000 + rng() * 6000;
-      bigPool.push(Math.round(amount));
-    } else {
-      amount = 10000 + rng() * 8000;
-      bigPool.push(Math.round(Math.min(18000, amount)));
-    }
+  const nLow = Math.round(TOTAL * 0.6);
+  const nMid = Math.round(TOTAL * 0.25);
+  const nHigh = TOTAL - nLow - nMid;
+
+  const prices: number[] = [];
+
+  for (let i = 0; i < nLow; i++) {
+    prices.push(Math.round((12 + rng() * (80 - 12)) * 100) / 100);
+  }
+  for (let i = 0; i < nMid; i++) {
+    prices.push(Math.round((80 + rng() * (110 - 80)) * 100) / 100);
+  }
+  for (let i = 0; i < nHigh; i++) {
+    prices.push(Math.round((110 + rng() * (150 - 110)) * 100) / 100);
   }
 
-  while (smallPool.length < SMALL_PER_PAGE * FIRST_PAGES + 20) {
-    smallPool.push(Math.round(30 + rng() * 770));
-  }
-  while (smallPool.length + bigPool.length < TOTAL) {
-    bigPool.push(Math.round(801 + rng() * 17199));
-  }
-
-  const smalls = shuffle(smallPool, rng);
-  const bigs = shuffle(bigPool, rng);
+  const cheap = shuffle(
+    prices.filter((p) => p <= 80),
+    rng
+  );
+  const rest = shuffle(
+    prices.filter((p) => p > 80),
+    rng
+  );
 
   const ordered: number[] = [];
-  let sIdx = 0;
-  let bIdx = 0;
+  let cIdx = 0;
+  let rIdx = 0;
 
   for (let page = 0; page < FIRST_PAGES; page++) {
     const pageItems: number[] = [];
     for (let k = 0; k < SMALL_PER_PAGE; k++) {
-      pageItems.push(smalls[sIdx++] ?? Math.round(30 + rng() * 770));
+      pageItems.push(cheap[cIdx++] ?? 12 + rng() * 40);
     }
     while (pageItems.length < PAGE) {
-      pageItems.push(bigs[bIdx++] ?? Math.round(900 + rng() * 8000));
+      pageItems.push(rest[rIdx++] ?? 90 + rng() * 40);
     }
     ordered.push(...shuffle(pageItems, rng));
   }
 
-  const rest: number[] = [];
-  while (sIdx < smalls.length) rest.push(smalls[sIdx++]);
-  while (bIdx < bigs.length) rest.push(bigs[bIdx++]);
-  ordered.push(...shuffle(rest, rng));
+  const leftover: number[] = [];
+  while (cIdx < cheap.length) leftover.push(cheap[cIdx++]);
+  while (rIdx < rest.length) leftover.push(rest[rIdx++]);
+  ordered.push(...shuffle(leftover, rng));
 
-  const amounts = ordered.slice(0, TOTAL);
-  while (amounts.length < TOTAL) {
-    amounts.push(Math.round(30 + rng() * 17970));
+  while (ordered.length < TOTAL) {
+    ordered.push(12 + rng() * 138);
   }
 
+  const finalPrices = ordered.slice(0, TOTAL).map((p) =>
+    Math.min(150, Math.max(12, Math.round(p * 100) / 100))
+  );
+
   const countries = shuffle(
-    amounts.map((_, i) => COUNTRIES[i % COUNTRIES.length]),
+    finalPrices.map((_, i) => COUNTRIES[i % COUNTRIES.length]),
     rng
   );
 
-  return amounts.map((amount, i) => {
-    let price = priceFromAmount(amount, i + 1);
-    if (i === 0) price = 8;
-    else if (i === 1) price = 9.5;
-    else if (i === 2) price = 11;
+  return finalPrices.map((price, i) => {
+    let p = price;
+    if (i === 0) p = 12;
+    else if (i === 1) p = 13.5;
+    else if (i === 2) p = 15;
+
     return {
       id: `cb-log-${String(i + 1).padStart(4, '0')}`,
-      amount,
-      price,
+      amount: amountFromPrice(p, rng),
+      price: p,
       country: countries[i],
     };
   });
