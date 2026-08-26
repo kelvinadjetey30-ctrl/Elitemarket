@@ -1,43 +1,13 @@
-/** ELITEMARKET monogram — gold elite mark */
+/** Elitebin brand mark — user provided BB logo */
 export function Logo({ size = 32, className = '' }: { size?: number; className?: string }) {
   return (
-    <svg
+    <img
+      src="data:image/jpeg;base64,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"
+      alt="Elitebin"
       width={size}
       height={size}
-      viewBox="0 0 120 120"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      aria-label="EliteMarket"
-    >
-      <circle cx="60" cy="60" r="54" stroke="#e8b923" strokeWidth="3" opacity="0.35" />
-      <path
-        d="M28 88 C12 68 12 40 28 22 C36 14 48 10 60 10"
-        stroke="#e8b923"
-        strokeWidth="4"
-        strokeLinecap="round"
-        fill="none"
-      />
-      <path
-        d="M60 110 C88 110 108 88 108 60 C108 40 98 24 82 16"
-        stroke="#f5d76e"
-        strokeWidth="4"
-        strokeLinecap="round"
-        fill="none"
-        opacity="0.85"
-      />
-      <text
-        x="58"
-        y="72"
-        textAnchor="middle"
-        fontFamily="Georgia, 'Times New Roman', serif"
-        fontSize="48"
-        fontWeight="700"
-        fill="#e8b923"
-        letterSpacing="-2"
-      >
-        EM
-      </text>
-    </svg>
+      className={`rounded-full object-cover shrink-0 border border-white/10 ${className}`}
+      style={{ width: size, height: size }}
+    />
   );
 }

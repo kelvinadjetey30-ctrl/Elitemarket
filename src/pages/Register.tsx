@@ -40,10 +40,10 @@ export default function Register() {
       <div className="w-full max-w-md rounded-2xl border border-accent/30 bg-surface p-8">
         <div className="mb-8 text-center">
           <div className="mx-auto mb-3 flex justify-center">
-            <Logo size={40} />
+            <Logo size={48} />
           </div>
           <h1 className="text-2xl font-semibold tracking-tight">Create account</h1>
-          <p className="mt-1 text-sm text-muted">Join ELITEMARKET</p>
+          <p className="mt-1 text-sm text-muted">Join Elitebin</p>
         </div>
         <form onSubmit={onSubmit} className="space-y-4">
           <Input
@@ -72,9 +72,9 @@ export default function Register() {
             {loading ? 'Creating…' : 'Create account'}
           </Button>
         </form>
-        <p className="mt-4 text-center text-sm text-muted">
+        <p className="mt-6 text-center text-sm text-muted">
           Already have an account?{' '}
-          <Link to="/login" className="text-accent hover:underline">
+          <Link to="/login" className="font-medium text-accent hover:underline">
             Sign in
           </Link>
         </p>

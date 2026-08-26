@@ -43,10 +43,10 @@ export function Header() {
         </div>
 
         <Link to="/dashboard" className="flex min-w-0 items-center gap-2 md:flex-none">
-          <Logo size={26} />
+          <Logo size={28} />
           <div className="min-w-0">
-            <p className="text-sm font-bold tracking-[0.2em] text-accent">ELITE</p>
-            <p className="hidden text-[10px] uppercase tracking-widest text-muted lg:block">Marketplace</p>
+            <p className="text-sm font-bold tracking-wide text-accent">Elitebin</p>
+            <p className="hidden text-[10px] uppercase tracking-widest text-muted lg:block">Premium</p>
           </div>
         </Link>
 

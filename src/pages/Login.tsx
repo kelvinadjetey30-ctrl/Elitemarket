@@ -69,9 +69,9 @@ export default function Login() {
       <div className="w-full max-w-md rounded-2xl border border-accent/30 bg-surface p-8 shadow-2xl shadow-black/50">
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 flex justify-center">
-            <Logo size={48} />
+            <Logo size={56} />
           </div>
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">ELITEMARKET</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">Elitebin</p>
           <h1 className="mt-2 text-xl font-bold">Sign in</h1>
           <p className="mt-1 text-sm text-muted">Access the catalog</p>
         </div>
