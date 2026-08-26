@@ -56,7 +56,7 @@ export default function Dashboard() {
       <Header />
       <main className="mx-auto max-w-6xl px-4 pt-5">
         <div className="mb-4 rounded-2xl border border-border bg-surface px-4 py-4 md:px-6">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-accent">ELITEMARKET</p>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-accent">Elitebin</p>
           <h1 className="mt-0.5 text-xl font-bold tracking-tight md:text-2xl">Browse listings</h1>
           <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
             <div className="relative flex-1">
